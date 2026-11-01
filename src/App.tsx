@@ -85,7 +85,7 @@ export default function App() {
   };
 
   return (
-    <div className="h-dvh max-h-dvh w-full overflow-hidden bg-white text-neutral-900 flex flex-col justify-between selection:bg-red-500 selection:text-white p-2 sm:p-3 md:p-4 pb-7 sm:pb-5 select-none">
+    <div className="h-dvh max-h-dvh w-full overflow-hidden bg-white text-neutral-900 flex flex-col justify-between selection:bg-red-500 selection:text-white p-2 sm:p-3 md:p-4 pb-1 sm:pb-2 select-none">
       {/* Top Header Bar */}
       <header className="w-full max-w-md md:max-w-4xl mx-auto px-1 flex items-center justify-between shrink-0 h-10 sm:h-11">
         <div className="flex items-center gap-2">
@@ -124,8 +124,8 @@ export default function App() {
         </button>
       </header>
 
-      {/* Main Content: Scaled to fit 100% of screen with zero scrolling */}
-      <main className="w-full max-w-md md:max-w-4xl mx-auto flex-1 min-h-0 flex flex-col md:flex-row items-center justify-between gap-1.5 md:gap-8 py-0.5 sm:py-1">
+      {/* Main Content: Fixed small gap between QR and numpad, flush with bottom */}
+      <main className="w-full max-w-md md:max-w-4xl mx-auto flex-1 min-h-0 flex flex-col md:flex-row items-center justify-end md:justify-between gap-3 md:gap-8 py-0.5">
         {/* Top / Left: QR Display OR Outline Dotted Box */}
         <div className="flex-1 min-h-0 w-full flex flex-col items-center justify-center">
           <div className="w-full max-w-[340px] sm:max-w-[380px] flex flex-col items-center justify-center flex-1 min-h-0 max-h-full">
@@ -169,8 +169,8 @@ export default function App() {
           </div>
         </div>
 
-        {/* Bottom / Right: Inbuilt Numpad Section with safe bottom clearance */}
-        <div className="w-full max-w-[360px] md:max-w-[400px] shrink-0 pb-1 sm:pb-0">
+        {/* Bottom / Right: Inbuilt Numpad Section flush with bottom */}
+        <div className="w-full max-w-[360px] md:max-w-[400px] shrink-0 pb-0">
           <Numpad
             value={amountInput}
             onChange={handleNumpadChange}

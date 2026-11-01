@@ -15,8 +15,8 @@ export default defineConfig(() => {
         includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'icon.svg'],
         manifest: {
           id: '/',
-          name: 'Fonepay Dynamic QR',
-          short_name: 'Fonepay QR',
+          name: 'DynamicQR',
+          short_name: 'DynamicQR',
           description: 'Instant offline dynamic QR generator for Fonepay business payments in NPR.',
           theme_color: '#BA1A1A',
           background_color: '#FFFFFF',
