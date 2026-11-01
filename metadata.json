@@ -1,0 +1,6 @@
+{
+  "name": "Fonepay Dynamic QR - Giri Kirana Store",
+  "description": "Fast dynamic QR generator for Fonepay business payments in Nepal with built-in instant keypad and automatic NPR amount encoding.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
