@@ -16,14 +16,14 @@ export interface FonepayMerchantInfo {
 }
 
 export const DEFAULT_MERCHANT: FonepayMerchantInfo = {
-  merchantName: 'Giri Kirana Store',
-  terminalId: '2222020017969383',
-  terminalLabel: '1844524',
-  city: 'Kathmandu MP',
+  merchantName: 'Your Business',
+  terminalId: '',
+  terminalLabel: '',
+  city: '',
   mcc: '5331',
   currency: '524', // NPR (ISO 4217)
   country: 'NP',
-  acquirer: 'eSewa',
+  acquirer: 'Fonepay',
 };
 
 /**
@@ -124,6 +124,11 @@ export function buildFonepayQr(
   const numAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
   const isDynamic = !isNaN(numAmount) && numAmount > 0;
   const formattedAmount = isDynamic ? numAmount.toFixed(2) : '';
+
+  // If no business QR has been added, return empty
+  if (!merchant || !merchant.terminalId) {
+    return { qrPayload: '', isDynamic: false, formattedAmount: '' };
+  }
 
   // Tag 01: Point of Initiation Method: 11 = Static, 12 = Dynamic
   const t01 = isDynamic ? '12' : '11';

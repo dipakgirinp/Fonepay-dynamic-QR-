@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import jsQR from 'jsqr';
 import { FonepayMerchantInfo, parseFonepayQr, sounds } from '../utils/fonepayQr';
-import { X, Check, Building2, QrCode, Camera, Upload, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { usePWAInstall } from '../utils/usePWAInstall';
+import { X, Check, Building2, QrCode, Camera, Upload, AlertCircle, CheckCircle2, Download, Smartphone, Copy } from 'lucide-react';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -20,6 +21,27 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   const [isScanningCamera, setIsScanningCamera] = useState<boolean>(false);
   const [scanError, setScanError] = useState<string | null>(null);
   const [scanSuccessMsg, setScanSuccessMsg] = useState<string | null>(null);
+  const [showInstallGuide, setShowInstallGuide] = useState<boolean>(false);
+  const [copiedUrl, setCopiedUrl] = useState<boolean>(false);
+
+  const { isInstallable, isInstalled, install } = usePWAInstall();
+
+  const handleInstallClick = async () => {
+    if (isInstallable) {
+      const success = await install();
+      if (success) {
+        sounds.playSuccess();
+        return;
+      }
+    }
+    setShowInstallGuide(true);
+  };
+
+  const handleCopyUrl = () => {
+    navigator.clipboard.writeText(window.location.href);
+    setCopiedUrl(true);
+    setTimeout(() => setCopiedUrl(false), 2500);
+  };
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -38,8 +60,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
       stopCamera();
       setScanError(null);
       setScanSuccessMsg(null);
+    } else {
+      setFormData(merchant);
     }
-  }, [isOpen]);
+  }, [isOpen, merchant]);
 
   const stopCamera = () => {
     if (animationFrameRef.current) {
@@ -339,25 +363,99 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           </form>
         </div>
 
-        {/* Footer (Without 'Reset Default') */}
-        <div className="p-3.5 px-5 border-t border-neutral-100 bg-neutral-50 flex items-center justify-end gap-2 shrink-0">
+        {/* Footer */}
+        <div className="p-3 px-4 sm:px-5 border-t border-neutral-100 bg-neutral-50 flex items-center justify-between gap-2 shrink-0">
+          {/* Left side: Download as APK button */}
           <button
             type="button"
-            onClick={onClose}
-            className="px-4 py-2 rounded-xl text-neutral-600 hover:bg-neutral-100 text-xs font-semibold cursor-pointer"
+            onClick={handleInstallClick}
+            className="px-3 py-2 sm:px-3.5 sm:py-2 rounded-xl bg-neutral-900 hover:bg-neutral-800 active:scale-95 text-white text-xs font-bold flex items-center gap-1.5 shadow-2xs transition-all cursor-pointer"
+            title="Download or install this app on Android"
           >
-            Cancel
+            <Download className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+            <span className="truncate">{isInstalled ? 'App Installed ✓' : 'Download APK'}</span>
           </button>
-          <button
-            type="submit"
-            form="settings-form"
-            className="px-6 py-2.5 rounded-xl bg-[#BA1A1A] hover:bg-[#9e1616] active:scale-95 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm cursor-pointer transition-all"
-          >
-            <Check className="w-4 h-4" />
-            <span>Save Destination</span>
-          </button>
+
+          {/* Right side: Cancel and Save Changes */}
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-3 py-2 sm:px-4 sm:py-2 rounded-xl text-neutral-600 hover:bg-neutral-100 text-xs font-semibold cursor-pointer"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              form="settings-form"
+              className="px-4 py-2 sm:px-5 sm:py-2 rounded-xl bg-[#BA1A1A] hover:bg-[#9e1616] active:scale-95 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm cursor-pointer transition-all"
+            >
+              <Check className="w-4 h-4" />
+              <span>Save Changes</span>
+            </button>
+          </div>
         </div>
       </div>
+
+      {/* APK & Android Offline Installation Guide Popup */}
+      {showInstallGuide && (
+        <div className="fixed inset-0 z-60 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in">
+          <div className="w-full max-w-sm bg-white rounded-3xl p-5 shadow-2xl border border-neutral-200 flex flex-col gap-3.5">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center">
+                  <Smartphone className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="font-extrabold text-sm text-neutral-900 leading-tight">
+                    Install Offline Android App
+                  </h3>
+                  <p className="text-[11px] text-neutral-500">
+                    Works 100% offline without internet
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setShowInstallGuide(false)}
+                className="p-1 rounded-full text-neutral-400 hover:text-neutral-700"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="bg-neutral-50 rounded-2xl p-3 border border-neutral-200 text-xs text-neutral-700 space-y-2">
+              <p className="font-bold text-neutral-900">How to install on Android:</p>
+              <ol className="list-decimal list-inside space-y-1 text-[11px] text-neutral-600 leading-relaxed">
+                <li>Open this link in <strong>Google Chrome</strong> on your phone.</li>
+                <li>Tap the <strong>three dots menu (⋮)</strong> in the top-right corner.</li>
+                <li>Tap <strong>"Install app"</strong> (or <strong>"Add to Home screen"</strong>).</li>
+                <li>Android will instantly install the standalone app with the Fonepay icon!</li>
+              </ol>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={handleCopyUrl}
+                className="flex-1 py-2 px-3 rounded-xl bg-neutral-100 hover:bg-neutral-200 text-neutral-800 text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+              >
+                <Copy className="w-3.5 h-3.5" />
+                <span>{copiedUrl ? 'Link Copied!' : 'Copy App Link'}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setShowInstallGuide(false)}
+                className="flex-1 py-2 px-3 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-bold text-center cursor-pointer"
+              >
+                Got It
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

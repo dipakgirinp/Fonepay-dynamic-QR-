@@ -151,7 +151,7 @@ export const Numpad: React.FC<NumpadProps> = ({
               key={btn.label}
               type="button"
               onClick={btn.action}
-              className="h-11 sm:h-12 md:h-13 rounded-xl bg-white hover:bg-neutral-50 active:bg-neutral-100 active:scale-95 text-neutral-900 font-bold text-lg sm:text-xl shadow-2xs border border-neutral-200 flex items-center justify-center transition-all cursor-pointer"
+              className="h-11 sm:h-12 md:h-13 rounded-xl bg-neutral-50 hover:bg-neutral-100 active:bg-neutral-200 active:scale-95 text-neutral-900 font-bold text-lg sm:text-xl shadow-2xs border border-neutral-200/90 flex items-center justify-center transition-all cursor-pointer"
             >
               {btn.label}
             </button>
